@@ -1,13 +1,11 @@
 // Prevents additional console window on Windows in release, DO NOT REMOVE!!
 #![cfg_attr(not(debug_assertions), windows_subsystem = "windows")]
 
-use tauri_plugin_shell::ShellExt;
-use tauri_plugin_shell::process::CommandEvent;
 
 fn main() {
     tauri::Builder::default()
         .plugin(tauri_plugin_shell::init())
-        .setup(|app| {
+        .setup(|_app| {
             // In a real build, we would launch the bundled sidecar.
             // For MVP dev mode, we might want to launch the python script manually
             // or use the sidecar feature if we bundle python.
