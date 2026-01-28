@@ -6,10 +6,25 @@ from apps.sidecar.core.logger import get_logger
 logger = get_logger("sidecar.config")
 
 class ConfigManager:
-    def __init__(self, config_path: str = "config.json"):
-        # Use a path relative to the sidecar execution or a fixed user home path
-        # For MVP, we'll try to put it in the project root or current working dir
-        self.config_path = Path(os.getcwd()) / config_path
+    def __init__(self, config_filename: str = "config.json"):
+        # Try current working directory first
+        cwd_path = Path(os.getcwd()) / config_filename
+        
+        # Try project root (relative to this file: apps/sidecar/core/config.py -> ../../../config.json)
+        # This assumes the file is in apps/sidecar/core/config.py
+        # Path(__file__) is absolute path of config.py
+        # .parent (core) -> .parent (sidecar) -> .parent (apps) -> .parent (root)
+        project_root = Path(__file__).resolve().parent.parent.parent.parent
+        root_path = project_root / config_filename
+        
+        if cwd_path.exists():
+            self.config_path = cwd_path
+        elif root_path.exists():
+            self.config_path = root_path
+        else:
+            # Default to CWD if neither exists
+            self.config_path = cwd_path
+            
         self._config = {}
         self._load()
 

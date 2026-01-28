@@ -47,3 +47,6 @@ def get_logger(name: str):
 
 def get_logs(limit: int = 100):
     return list(LOG_BUFFER)[-limit:]
+
+def clear_logs():
+    LOG_BUFFER.clear()

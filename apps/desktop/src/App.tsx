@@ -14,8 +14,8 @@ function App() {
   const [logs, setLogs] = useState<LogEntry[]>([]);
   const [status, setStatus] = useState<"disconnected" | "connected">("disconnected");
   const [loading, setLoading] = useState(false);
-  const [showSettings, setShowSettings] = useState(false);
-  const [apiKey, setApiKey] = useState("");
+  // const [showSettings, setShowSettings] = useState(false);
+  // const [apiKey, setApiKey] = useState("");
   const logEndRef = useRef<HTMLDivElement>(null);
   const logContainerRef = useRef<HTMLDivElement>(null);
   const isUserAtBottomRef = useRef(true);
@@ -55,13 +55,14 @@ function App() {
   useEffect(() => {
     const fetchConfig = async () => {
       try {
-        const res = await fetch(`${API_URL}/config`);
-        if (res.ok) {
-          const data = await res.json();
-          if (data.GOOGLE_API_KEY) {
-            setApiKey(data.GOOGLE_API_KEY);
-          }
-        }
+        await fetch(`${API_URL}/config`);
+        // const res = await fetch(`${API_URL}/config`);
+        // if (res.ok) {
+        //   const data = await res.json();
+        //   if (data.GOOGLE_API_KEY) {
+        //     setApiKey(data.GOOGLE_API_KEY);
+        //   }
+        // }
       } catch (e) {
         console.error("Failed to fetch config", e);
       }
@@ -91,6 +92,15 @@ function App() {
     }
   };
 
+  const clearLogs = async () => {
+    try {
+      setLogs([]); // Optimistic update
+      await fetch(`${API_URL}/logs`, { method: "DELETE" });
+    } catch (e) {
+      console.error("Failed to clear logs", e);
+    }
+  };
+
   return (
     <div className="container">
       <header className="header">
@@ -113,7 +123,17 @@ function App() {
         <div className="log-console">
           <div className="log-header">
             <h3>System Logs</h3>
-            <span className="log-count">{logs.length} lines</span>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
+              <span className="log-count">{logs.length} lines</span>
+              <button 
+                className="action-btn"
+                onClick={clearLogs} 
+                title="Clear logs"
+                style={{ fontSize: '0.75rem', padding: '4px 8px', border: '1px solid #334155' }}
+              >
+                Clear
+              </button>
+            </div>
           </div>
           <div className="log-body" ref={logContainerRef} onScroll={handleScroll}>
             {logs.length === 0 && <div className="log-empty">Waiting for logs...</div>}

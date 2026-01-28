@@ -7,7 +7,7 @@ import sys
 # Add project root to path to import core
 sys.path.append(os.getcwd())
 from apps.sidecar.core.docker_client import docker_client
-from apps.sidecar.core.logger import get_logger, get_logs
+from apps.sidecar.core.logger import get_logger, get_logs, clear_logs
 from apps.sidecar.core.config import config_manager
 
 logger = get_logger("sidecar.api")
@@ -41,6 +41,11 @@ async def health_check():
 @app.get("/logs")
 async def fetch_logs():
     return get_logs(200)
+
+@app.delete("/logs")
+async def clear_logs_endpoint():
+    clear_logs()
+    return {"status": "cleared"}
 
 @app.get("/config")
 async def get_config():

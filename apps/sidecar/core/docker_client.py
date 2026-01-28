@@ -35,8 +35,10 @@ class MockDockerClient:
                     if env:
                         run_env.update(env)
                     
-                    if "GOOGLE_API_KEY" in os.environ:
-                         run_env["GOOGLE_API_KEY"] = os.environ["GOOGLE_API_KEY"]
+                    # If env is provided, it should take precedence over system env
+                    # We already updated run_env with env above, so we don't need to do anything else
+                    # unless we want to force system env (which we don't for API keys)
+                    pass
                     
                     # Use Popen to capture stdout/stderr in real-time
                     process = subprocess.Popen(
