@@ -17,6 +17,18 @@ function App() {
   const [showSettings, setShowSettings] = useState(false);
   const [apiKey, setApiKey] = useState("");
   const logEndRef = useRef<HTMLDivElement>(null);
+  const logContainerRef = useRef<HTMLDivElement>(null);
+  const isUserAtBottomRef = useRef(true);
+
+  // Handle scroll events to detect if user is at bottom
+  const handleScroll = () => {
+    if (logContainerRef.current) {
+      const { scrollTop, scrollHeight, clientHeight } = logContainerRef.current;
+      // If within 50px of bottom, consider it "at bottom"
+      const isAtBottom = scrollHeight - scrollTop - clientHeight < 50;
+      isUserAtBottomRef.current = isAtBottom;
+    }
+  };
 
   // Poll for logs and status
   useEffect(() => {
@@ -59,7 +71,9 @@ function App() {
 
   // Auto-scroll logs
   useEffect(() => {
-    logEndRef.current?.scrollIntoView({ behavior: "smooth" });
+    if (isUserAtBottomRef.current) {
+      logEndRef.current?.scrollIntoView({ behavior: "smooth" });
+    }
   }, [logs]);
 
   const runTask = async () => {
@@ -101,7 +115,7 @@ function App() {
             <h3>System Logs</h3>
             <span className="log-count">{logs.length} lines</span>
           </div>
-          <div className="log-body">
+          <div className="log-body" ref={logContainerRef} onScroll={handleScroll}>
             {logs.length === 0 && <div className="log-empty">Waiting for logs...</div>}
             {logs.map((log, i) => (
               <div key={i} className={`log-line ${log.level.toLowerCase()}`}>
