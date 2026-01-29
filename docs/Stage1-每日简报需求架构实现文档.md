@@ -128,8 +128,12 @@ contex/
 - [x] 添加 `SKILL.md` (符合 Claude Skill 规范)
 
 ### Phase 3: Docker Environment Standardization
-- [x] 更新 `packages/brain/Dockerfile` 包含 Core 路径和依赖 (langgraph, sqlite等)
-- [x] 验证本地 Docker 构建和运行
+- [x] 更新 `packages/brain/Dockerfile` 采用多阶段构建 (Multi-stage build)
+  - Base: `debian:bookworm-slim`
+  - Core: Python 3.11+, Node.js, Git, Supervisor, Playwright (System Chrome)
+  - Optimization: 清理 apt/pip 缓存，Code Server 仅保留核心文件
+- [x] 配置 `supervisord.conf` 接管容器进程 (Code Server + Agent)
+- [x] 验证本地 Docker 构建和运行 (Target size: ~400MB)
 
 ### Phase 4: Sidecar Integration & E2E Testing
 - [x] 更新 Sidecar `SkillManager` 适配新目录结构和 Manifest

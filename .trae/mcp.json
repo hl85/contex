@@ -1,0 +1,11 @@
+{
+  "mcpServers": [
+    {
+      "name": "contex-context",
+      "command": [
+        "python3",
+        "/Users/wanghui/Code/contex/scripts/project_context_mcp.py"
+      ]
+    }
+  ]
+}

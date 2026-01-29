@@ -1,6 +1,6 @@
-# Contex MVP User Manual (Stage 1)
+# Contex User Manual (Stage 1)
 
-本文档旨在指导用户完成 Contex MVP 版本的安装、配置、启动及验证流程。
+本文档旨在指导用户完成 Contex Stage 1 版本的安装、配置、启动及验证流程。
 
 ## 1. 前置要求 (Prerequisites)
 
@@ -21,7 +21,7 @@ cd contex
 ```
 
 ### 2.2 安装 Sidecar & Skill 依赖
-由于 MVP 版本默认使用 **Mock Docker** 模式（直接在宿主机运行 Python 脚本），因此需要在宿主机安装 Skill 所需的 Python 库。
+由于 Stage 1 版本默认使用 **Mock Docker** 模式（直接在宿主机运行 Python 脚本），因此需要在宿主机安装 Skill 所需的 Python 库。
 
 ```bash
 # 建议创建虚拟环境
@@ -31,7 +31,7 @@ source venv/bin/activate
 # 安装 Sidecar 依赖
 pip install -r apps/sidecar/requirements.txt
 
-# 安装 Skill & Brain Core 运行时依赖 (MVP Mock 模式必需)
+# 安装 Skill & Brain Core 运行时依赖 (Stage 1 Mock 模式必需)
 pip install duckduckgo-search google-genai langchain langgraph beautifulsoup4 pandas playwright
 playwright install chromium
 ```
@@ -91,7 +91,7 @@ cd contex/apps/desktop
 # 启动 Tauri 开发模式
 npm run tauri dev
 ```
-*成功标志*: 桌面应用窗口弹出，显示 "Contex MVP" 仪表盘。
+*成功标志*: 桌面应用窗口弹出，显示 "Contex Stage 1" 仪表盘。
 
 ## 5. 操作与验证 (Usage & Verification)
 
@@ -121,7 +121,7 @@ npm run tauri dev
         *   `[skill.daily-brief] Workflow executed successfully.`
 
 ### 5.4 查看结果
-*   目前 MVP 版本的结果通过日志输出。
+*   目前 Stage 1 版本的结果通过日志输出。
 *   如果配置了有效的 API Key，日志中将包含 "Final Brief Length: ..." 等信息，表明摘要已生成。
 *   (后续版本将在 UI 中直接展示生成的 Markdown 简报)
 
@@ -137,4 +137,4 @@ A: 请确保根目录存在 `config.json` 且包含 `GOOGLE_API_KEY`。修改后
 A: 可能是 DuckDuckGo 访问受限，或者关键词无相关新闻。尝试更换关键词 (如 "Apple")。
 
 ---
-**Enjoy Contex MVP!**
+**Enjoy Contex Stage 1!**
