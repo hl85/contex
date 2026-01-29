@@ -1,0 +1,7 @@
+requests
+duckduckgo-search
+langgraph
+langchain
+supervisor
+playwright
+google-generativeai

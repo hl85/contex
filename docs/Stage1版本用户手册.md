@@ -53,6 +53,7 @@ bun install
 ```bash
 export GOOGLE_API_KEY="your_actual_api_key_here"
 ```
+> **注意**: 如果项目根目录存在 `config.json` 文件，Sidecar 会优先读取其中的配置。请确保 `config.json` 中的 `GOOGLE_API_KEY` 是有效的，或者如果使用环境变量，请从 `config.json` 中移除该字段。
 
 **备选方式**: 在项目根目录 (`contex/`) 创建或修改 `config.json` 文件（但请注意：此方式不安全，密钥可能被意外提交）。
 
@@ -64,6 +65,26 @@ export GOOGLE_API_KEY="your_actual_api_key_here"
 }
 ```
 > **安全警告**: 切勿将真实的 API 密钥提交到版本控制系统。使用环境变量或 .env 文件，并确保 .env 文件在 .gitignore 中。
+
+### 3.2 运行模式配置 (Mock vs Docker)
+Contex 支持两种运行模式，可通过环境变量 `USE_MOCK_DOCKER` 控制。
+
+#### Mock 模式 (默认)
+*   **适用场景**: 开发调试，快速迭代。
+*   **原理**: Sidecar 直接在宿主机 Python 环境中生成子进程运行任务脚本。
+*   **配置**: 默认开启 (或设置 `USE_MOCK_DOCKER="true"`).
+*   **要求**: 必须在宿主机安装所有 Skill 依赖 (见 2.2 章节)。
+
+#### Docker 模式 (生产环境推荐)
+*   **适用场景**: 稳定运行，环境隔离。
+*   **原理**: Sidecar 调用 Docker API 启动 `contex-brain` 容器执行任务。
+*   **配置**: 设置 `USE_MOCK_DOCKER="false"`.
+*   **前置要求**:
+    1.  安装并启动 Docker Desktop。
+    2.  构建 Brain 镜像 (在项目根目录执行):
+        ```bash
+        docker build -t contex-brain:latest -f packages/brain/Dockerfile .
+        ```
 
 ## 4. 启动流程 (Startup)
 
