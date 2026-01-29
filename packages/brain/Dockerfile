@@ -1,4 +1,4 @@
-FROM python:3.12-slim
+FROM docker.m.daocloud.io/python:3.12-slim
 
 # Environment Variables
 ENV DEBIAN_FRONTEND=noninteractive
@@ -7,7 +7,8 @@ ENV PYTHONUNBUFFERED=1
 ENV PATH="/root/.local/bin:$PATH"
 
 # Install System Dependencies
-RUN apt-get update && apt-get install -y \
+RUN sed -i 's/deb.debian.org/mirrors.ustc.edu.cn/g' /etc/apt/sources.list.d/debian.sources && \
+    apt-get update && apt-get install -y \
     curl \
     git \
     nodejs \
@@ -16,10 +17,12 @@ RUN apt-get update && apt-get install -y \
     && rm -rf /var/lib/apt/lists/*
 
 # Install PM2 globally
-RUN npm install pm2 -g
+RUN npm config set registry https://registry.npmmirror.com && \
+    npm install pm2 -g
 
 # Install Python Tools
-RUN pip install --no-cache-dir --upgrade pip && \
+RUN pip config set global.index-url https://pypi.tuna.tsinghua.edu.cn/simple && \
+    pip install --no-cache-dir --upgrade pip && \
     pip install --no-cache-dir \
     pandas \
     playwright \

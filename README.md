@@ -29,6 +29,9 @@ source .venv/bin/activate
 
 # 安装依赖
 pip install -r apps/sidecar/requirements.txt
+
+# 设置环境变量 (安全性考虑，请勿将 API 密钥提交到版本控制)
+export GOOGLE_API_KEY="your_google_api_key_here"
 ```
 
 ### 2. 运行 Sidecar 服务
@@ -57,7 +60,7 @@ python scripts/verify_mvp_full.py
 ## 设计原则
 
 - **Zero Terminal**: 尽可能减少用户对命令行的直接操作。
-- **Privacy First**: 本地优先，数据存储在用户机器上。
+- **Privacy First**: 本地优先，数据存储在用户机器上。敏感信息如 API 密钥通过环境变量管理，避免配置文件泄露。
 - **MCP Protocol**: 使用 Model Context Protocol 连接容器与宿主机。
 - **Remote Control**: (规划中) 支持通过微信生态进行远程控制。
 

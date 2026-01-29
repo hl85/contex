@@ -47,17 +47,23 @@ bun install
 ## 3. 配置 (Configuration)
 
 ### 3.1 设置 API Key
-在项目根目录 (`contex/`) 创建或修改 `config.json` 文件，填入您的 Google Gemini API Key。
+出于安全性考虑，建议通过环境变量设置 Google Gemini API Key，而非直接写入配置文件。
+
+**推荐方式**: 在激活虚拟环境后，设置环境变量：
+```bash
+export GOOGLE_API_KEY="your_actual_api_key_here"
+```
+
+**备选方式**: 在项目根目录 (`contex/`) 创建或修改 `config.json` 文件（但请注意：此方式不安全，密钥可能被意外提交）。
 
 **文件路径**: `/path/to/contex/config.json`
 
 ```json
 {
-  "GOOGLE_API_KEY": "AIzaSyD...", 
   "log_level": "INFO"
 }
 ```
-> **注意**: 如果不设置有效的 API Key，系统将使用 Mock 数据生成简报，不会调用真实 AI 模型。
+> **安全警告**: 切勿将真实的 API 密钥提交到版本控制系统。使用环境变量或 .env 文件，并确保 .env 文件在 .gitignore 中。
 
 ## 4. 启动流程 (Startup)
 

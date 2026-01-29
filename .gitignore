@@ -18,6 +18,7 @@ yarn-error.log
 pnpm-debug.log
 
 # Python
+.env
 __pycache__/
 *.py[cod]
 *$py.class

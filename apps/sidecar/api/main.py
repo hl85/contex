@@ -9,10 +9,14 @@ from pathlib import Path
 
 # Add project root to path to import core
 sys.path.append(os.getcwd())
-from apps.sidecar.core.docker_client import docker_client
-from apps.sidecar.core.logger import get_logger, get_logs, clear_logs
-from apps.sidecar.core.config import config_manager
 
+# Initialize Config first to load .env
+from apps.sidecar.core.config import config_manager
+from apps.sidecar.core.docker_client import docker_client
+from apps.sidecar.core.logger import get_logger, get_logs, clear_logs, setup_logging_config
+
+# Setup Global Logging
+setup_logging_config()
 logger = get_logger("sidecar.api")
 
 app = FastAPI(title="Contex Sidecar")
