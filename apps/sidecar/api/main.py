@@ -3,6 +3,9 @@ from pydantic import BaseModel
 import uvicorn
 import os
 import sys
+import json
+import glob
+from pathlib import Path
 
 # Add project root to path to import core
 sys.path.append(os.getcwd())
@@ -57,6 +60,49 @@ async def update_config(request: ConfigRequest):
         return {"status": "saved"}
     raise HTTPException(status_code=500, detail="Failed to save config")
 
+# --- Skills Management ---
+
+@app.get("/skills")
+async def list_skills():
+    """Scan packages/skills and return manifests."""
+    skills = []
+    skills_dir = Path(os.getcwd()) / "packages/skills"
+    
+    # Find all manifest.json files
+    manifests = glob.glob(str(skills_dir / "*/manifest.json"))
+    
+    for m_path in manifests:
+        try:
+            with open(m_path, "r") as f:
+                manifest = json.load(f)
+                skills.append(manifest)
+        except Exception as e:
+            logger.error(f"Failed to load manifest {m_path}: {e}")
+            
+    return skills
+
+@app.get("/config/{skill_id}")
+async def get_skill_config(skill_id: str):
+    """Get config for a specific skill."""
+    all_config = config_manager.get_all()
+    skill_configs = all_config.get("skill_configs", {})
+    return skill_configs.get(skill_id, {})
+
+@app.post("/config/{skill_id}")
+async def update_skill_config(skill_id: str, request: ConfigRequest):
+    """Update config for a specific skill."""
+    all_config = config_manager.get_all()
+    if "skill_configs" not in all_config:
+        all_config["skill_configs"] = {}
+    
+    all_config["skill_configs"][skill_id] = request.config
+    
+    if config_manager.save(all_config):
+        return {"status": "saved"}
+    raise HTTPException(status_code=500, detail="Failed to save config")
+
+# -------------------------
+
 @app.post("/notify")
 async def notify_user(request: NotificationRequest):
     # In a real scenario, this would communicate with the Tauri main process
@@ -68,25 +114,35 @@ async def notify_user(request: NotificationRequest):
 async def run_task(request: TaskRequest):
     logger.info(f"Received request to run task: {request.task_name}")
     
-    if request.task_name == "daily-brief":
-        # Prepare environment variables from config
-        env_vars = {"SIDECAR_URL": "http://127.0.0.1:12345"}
-        
-        # Inject GOOGLE_API_KEY if present in config
-        api_key = config_manager.get("GOOGLE_API_KEY")
-        if api_key:
-            env_vars["GOOGLE_API_KEY"] = api_key
-            
-        # Trigger the docker container
-        container_id = docker_client.run_container(
-            image="contex-brain:latest",
-            command="daily-brief",
-            env=env_vars
-        )
-        return {"status": "started", "container_id": container_id}
+    # Prepare base environment variables
+    env_vars = {"SIDECAR_URL": "http://127.0.0.1:12345"}
     
-    logger.warning(f"Task not found: {request.task_name}")
-    raise HTTPException(status_code=404, detail="Task not found")
+    # 1. Inject Global Config (API Keys)
+    api_key = config_manager.get("GOOGLE_API_KEY")
+    if api_key:
+        env_vars["GOOGLE_API_KEY"] = api_key
+        
+    # 2. Inject Skill Config
+    all_config = config_manager.get_all()
+    skill_configs = all_config.get("skill_configs", {})
+    skill_specific_config = skill_configs.get(request.task_name, {})
+    
+    if skill_specific_config:
+        env_vars["SKILL_CONFIG"] = json.dumps(skill_specific_config)
+        
+    # Trigger the docker container
+    # Assuming task_name matches folder name in packages/skills/
+    container_id = docker_client.run_container(
+        image="contex-brain:latest",
+        command=request.task_name,
+        env=env_vars
+    )
+    
+    if container_id:
+        return {"status": "started", "container_id": container_id}
+    else:
+        logger.warning(f"Task not found or failed to start: {request.task_name}")
+        raise HTTPException(status_code=404, detail="Task not found or failed to start")
 
 if __name__ == "__main__":
     uvicorn.run(app, host="127.0.0.1", port=12345)

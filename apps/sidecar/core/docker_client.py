@@ -32,6 +32,10 @@ class MockDockerClient:
             def _run():
                 try:
                     run_env = os.environ.copy()
+                    # Ensure packages is in PYTHONPATH for Mock execution
+                    cwd = os.getcwd()
+                    run_env["PYTHONPATH"] = f"{cwd}:{cwd}/packages:" + run_env.get("PYTHONPATH", "")
+                    
                     if env:
                         run_env.update(env)
                     

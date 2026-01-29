@@ -11,10 +11,14 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@rjsf/core": "^6.2.5",
+    "@rjsf/utils": "^6.2.5",
+    "@rjsf/validator-ajv8": "^6.2.5",
     "@tauri-apps/api": "^2.9.1",
     "@tauri-apps/plugin-shell": "^2.3.4",
     "react": "^19.2.0",
-    "react-dom": "^19.2.0"
+    "react-dom": "^19.2.0",
+    "react-router-dom": "^7.13.0"
   },
   "devDependencies": {
     "@eslint/js": "^9.39.1",

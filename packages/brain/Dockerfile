@@ -37,9 +37,12 @@ RUN playwright install chromium --with-deps
 
 # Setup Workspace
 WORKDIR /workspace
+RUN mkdir -p /app/data && chmod 777 /app/data
 
-# Copy Skill (This will be mounted in dev, but copied in prod)
-# COPY packages/skills/daily-brief /app/skills/daily-brief
+# Install Brain Core SDK
+COPY packages/brain/core /app/brain/core
+ENV PYTHONPATH="/app:$PYTHONPATH"
+ENV BRAIN_DB_PATH="/app/data/brain.db"
 
 # Entrypoint
 CMD ["/bin/bash"]

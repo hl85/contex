@@ -1,0 +1,28 @@
+{
+  "id": "daily-brief",
+  "name": "每日简报",
+  "description": "自动抓取指定话题的最新资讯并生成摘要",
+  "config_schema": {
+    "topics": {
+      "type": "array",
+      "title": "关注话题",
+      "items": {
+        "type": "string"
+      },
+      "default": ["Artificial Intelligence", "Rust Programming", "Tauri Framework"]
+    },
+    "language": {
+      "type": "string",
+      "title": "简报语言",
+      "enum": ["中文", "English"],
+      "default": "中文"
+    },
+    "max_results": {
+      "type": "integer",
+      "title": "每个话题抓取数量",
+      "default": 3,
+      "minimum": 1,
+      "maximum": 10
+    }
+  }
+}
